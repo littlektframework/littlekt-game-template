@@ -111,3 +111,7 @@ android {
         targetSdk = (findProperty("android.targetSdk") as String).toInt()
     }
 }
+
+rootProject.extensions.configure<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension> {
+    versions.webpackCli.version = "4.10.0"
+}
