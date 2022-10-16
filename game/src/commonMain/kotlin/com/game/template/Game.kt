@@ -31,7 +31,7 @@ class Game(context: Context) : ContextListener(context) {
 
             batch.use(camera.viewProjection) {
                 Fonts.default.draw(it, "Hello LittleKt!", 0f, 0f)
-                shapeRenderer.filledRectangle(-50f, 50f, 100f, 50f, rotation, color = Color.RED.toFloatBits())
+                shapeRenderer.filledRectangle(-25f, 50f, 100f, 50f, rotation, color = Color.RED.toFloatBits())
             }
             rotationTimer += dt
             if (rotationTimer > 10.milliseconds) {
