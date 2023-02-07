@@ -2,9 +2,12 @@ package com.game.template
 
 import com.lehaine.littlekt.Context
 import com.lehaine.littlekt.ContextListener
-import com.lehaine.littlekt.graphics.*
+import com.lehaine.littlekt.graphics.Color
+import com.lehaine.littlekt.graphics.Fonts
+import com.lehaine.littlekt.graphics.g2d.*
+import com.lehaine.littlekt.graphics.g2d.shape.ShapeRenderer
 import com.lehaine.littlekt.graphics.gl.ClearBufferMask
-import com.lehaine.littlekt.graphics.shape.ShapeRenderer
+import com.lehaine.littlekt.graphics.toFloatBits
 import com.lehaine.littlekt.math.geom.degrees
 import com.lehaine.littlekt.math.geom.radians
 import com.lehaine.littlekt.util.viewport.ExtendViewport
@@ -30,7 +33,7 @@ class Game(context: Context) : ContextListener(context) {
             gl.clear(ClearBufferMask.COLOR_BUFFER_BIT)
 
             batch.use(camera.viewProjection) {
-                Fonts.default.draw(it, "Hello LittleKt!", 0f, 0f)
+                Fonts.default.draw(it, "Hello LittleKt!", -15f, 0f)
                 shapeRenderer.filledRectangle(-25f, 50f, 100f, 50f, rotation, color = Color.RED.toFloatBits())
             }
             rotationTimer += dt
