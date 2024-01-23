@@ -1,3 +1,4 @@
+import org.apache.tools.ant.taskdefs.condition.Os
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 
@@ -17,17 +18,19 @@ kotlin {
         compilations {
             val main by getting
 
-            val mainClass = (findProperty("jvm.mainClass") as? String)?.plus("Kt")
-                ?: project.logger.log(
+            val mainClassName = (findProperty("jvm.mainClass") as? String)?.plus("Kt")
+            if (mainClassName == null) {
+                project.logger.log(
                     LogLevel.ERROR,
                     "Property 'jvm.mainClass' has either changed or has not been set. Check 'gradle.properties' and ensure it is properly set!"
                 )
+            }
             tasks {
                 register<Copy>("copyResources") {
                     group = "package"
                     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
                     from(main.output.resourcesDir)
-                    destinationDir = File("$buildDir/publish")
+                    destinationDir = File("${layout.buildDirectory}/publish")
                 }
                 register<Jar>("packageFatJar") {
                     group = "package"
@@ -36,15 +39,30 @@ kotlin {
                     dependsOn(named("jvmJar"))
                     dependsOn(named("copyResources"))
                     manifest {
-                        attributes["Main-Class"] = mainClass
+                        attributes["Main-Class"] = mainClassName
                     }
-                    destinationDirectory.set(File("$buildDir/publish/"))
+                    destinationDirectory.set(File("${layout.buildDirectory}/publish/"))
                     from(
                         main.runtimeDependencyFiles.map { if (it.isDirectory) it else zipTree(it) },
                         main.output.classesDirs
                     )
                     doLast {
                         project.logger.lifecycle("[LittleKt] The packaged jar is available at: ${outputs.files.first().parent}")
+                    }
+                }
+                // workaround for https://youtrack.jetbrains.com/issue/KT-62214
+                if (Os.isFamily(Os.FAMILY_MAC) && mainClassName != null) {
+                    register<JavaExec>("jvmRun") {
+                        jvmArgs("-XstartOnFirstThread")
+                        mainClass.set(mainClassName)
+                        kotlin {
+                            val mainCompile = targets["jvm"].compilations["main"]
+                            dependsOn(mainCompile.compileAllTaskName)
+                            classpath(
+                                { mainCompile.output.allOutputs.files },
+                                (configurations["jvmRuntimeClasspath"])
+                            )
+                        }
                     }
                 }
             }
