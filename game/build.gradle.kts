@@ -29,8 +29,9 @@ kotlin {
                 register<Copy>("copyResources") {
                     group = "package"
                     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+                    dependsOn(named("jvmProcessResources"))
                     from(main.output.resourcesDir)
-                    destinationDir = File("${layout.buildDirectory}/publish")
+                    destinationDir = File("${layout.buildDirectory.asFile.get()}/publish")
                 }
                 register<Jar>("packageFatJar") {
                     group = "package"
@@ -41,7 +42,7 @@ kotlin {
                     manifest {
                         attributes["Main-Class"] = mainClassName
                     }
-                    destinationDirectory.set(File("${layout.buildDirectory}/publish/"))
+                    destinationDirectory.set(File("${layout.buildDirectory.asFile.get()}/publish/"))
                     from(
                         main.runtimeDependencyFiles.map { if (it.isDirectory) it else zipTree(it) },
                         main.output.classesDirs
