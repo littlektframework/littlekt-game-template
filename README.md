@@ -31,11 +31,22 @@ property in the `gradle.properties` file to ensure that the `packageFatJar` task
 
 **Running:**
 
-Run the `other/jsRun` gradle task like any other **Kotlin/JS** project to run in development mode.
+Run the `kotlin browser/jsBrowserRun` gradle task like any other **Kotlin/JS** project to run in development mode.
 
 **Deploying:**
 
 Run the `kotlin browser/jsBrowserDistribution` gradle task to create a distribution build. This build will require a
+webserver in order to run.
+
+### WASM
+
+**Running:**
+
+Run the `kotlin browser/wasmJsBrowserRun` gradle task like any other **Kotlin/Wasm** project to run in development mode.
+
+**Deploying:**
+
+Run the `kotlin browser/wasmJsBrowserDistribution` gradle task to create a distribution build. This build will require a
 webserver in order to run.
 
 ### Android

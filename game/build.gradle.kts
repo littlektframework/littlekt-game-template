@@ -1,15 +1,15 @@
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 
 repositories {
-    mavenCentral()
     maven(url = "https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
 }
 
 plugins {
-    kotlin("multiplatform")
-    id("com.android.application")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.multiplatform)
 }
 
 kotlin {
@@ -69,7 +69,7 @@ kotlin {
             }
         }
         compilations.all {
-            kotlinOptions.jvmTarget = "11"
+            kotlinOptions.jvmTarget = "17"
         }
         testRuns["test"].executionTask.configure {
             useJUnit()
@@ -95,6 +95,23 @@ kotlin {
         }
     }
 
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        binaries.executable()
+        browser {
+            commonWebpackConfig(Action {
+                devServer =
+                    (devServer ?: org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.DevServer()).copy(
+                        open = mapOf(
+                            "app" to mapOf(
+                                "name" to "firefox"
+                            )
+                        ),
+                    )
+            })
+        }
+    }
+
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -115,11 +132,14 @@ kotlin {
             }
         }
         val jsTest by getting
+        val wasmJsMain by getting
+        val wasmJsTest by getting
         val androidMain by getting
     }
 }
 
 android {
+    namespace = "com.game.template"
     sourceSets["main"].apply {
         manifest.srcFile("src/androidMain/AndroidManifest.xml")
         assets.srcDirs("src/commonMain/resources")
@@ -131,8 +151,8 @@ android {
         targetSdk = (findProperty("android.targetSdk") as String).toInt()
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
