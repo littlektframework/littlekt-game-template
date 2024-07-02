@@ -8,13 +8,13 @@ repositories {
 }
 
 plugins {
-    alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.multiplatform)
 }
 
 kotlin {
-    androidTarget()
+    tasks.withType<JavaExec> { jvmArgs("--enable-preview", "--enable-native-access=ALL-UNNAMED") }
     jvm {
+        compilations.all { kotlinOptions.jvmTarget = "21" }
         compilations {
             val main by getting
 
@@ -39,20 +39,19 @@ kotlin {
                     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
                     dependsOn(named("jvmJar"))
                     dependsOn(named("copyResources"))
-                    manifest {
-                        attributes["Main-Class"] = mainClassName
-                    }
+                    manifest { attributes["Main-Class"] = mainClassName }
                     destinationDirectory.set(File("${layout.buildDirectory.asFile.get()}/publish/"))
                     from(
                         main.runtimeDependencyFiles.map { if (it.isDirectory) it else zipTree(it) },
                         main.output.classesDirs
                     )
                     doLast {
-                        project.logger.lifecycle("[LittleKt] The packaged jar is available at: ${outputs.files.first().parent}")
+                        logger.lifecycle(
+                            "[LittleKt] The packaged jar is available at: ${outputs.files.first().parent}"
+                        )
                     }
                 }
-                // workaround for https://youtrack.jetbrains.com/issue/KT-62214
-                if (Os.isFamily(Os.FAMILY_MAC) && mainClassName != null) {
+                if (Os.isFamily(Os.FAMILY_MAC)) {
                     register<JavaExec>("jvmRun") {
                         jvmArgs("-XstartOnFirstThread")
                         mainClass.set(mainClassName)
@@ -68,54 +67,32 @@ kotlin {
                 }
             }
         }
-        compilations.all {
-            kotlinOptions.jvmTarget = "17"
-        }
-        testRuns["test"].executionTask.configure {
-            useJUnit()
-        }
     }
-    js(KotlinJsCompilerType.IR) {
+    js {
         binaries.executable()
         browser {
-            testTask {
-                useKarma {
-                    useChromeHeadless()
-                }
+            testTask { useKarma { useChromeHeadless() } }
+            commonWebpackConfig {
+                devServer =
+                    (devServer
+                        ?: org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+                            .DevServer())
+                        .copy(
+                            open = mapOf("app" to mapOf("name" to "chrome")),
+                        )
             }
         }
 
-        this.attributes.attribute(
-            KotlinPlatformType.attribute,
-            KotlinPlatformType.js
-        )
+        this.attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
 
-        compilations.all {
-            kotlinOptions.sourceMap = true
-        }
-    }
-
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        binaries.executable()
-        browser {
-            commonWebpackConfig(Action {
-                devServer =
-                    (devServer ?: org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.DevServer()).copy(
-                        open = mapOf(
-                            "app" to mapOf(
-                                "name" to "firefox"
-                            )
-                        ),
-                    )
-            })
-        }
+        compilations.all { kotlinOptions.sourceMap = true }
     }
 
     sourceSets {
         val commonMain by getting {
             dependencies {
                 implementation(libs.littlekt.core)
+                implementation(libs.littlekt.scenegraph)
                 implementation(libs.kotlinx.coroutines.core)
             }
         }
@@ -132,30 +109,5 @@ kotlin {
             }
         }
         val jsTest by getting
-        val wasmJsMain by getting
-        val wasmJsTest by getting
-        val androidMain by getting
     }
-}
-
-android {
-    namespace = "com.game.template"
-    sourceSets["main"].apply {
-        manifest.srcFile("src/androidMain/AndroidManifest.xml")
-        assets.srcDirs("src/commonMain/resources")
-    }
-    compileSdk = (findProperty("android.compileSdk") as String).toInt()
-
-    defaultConfig {
-        minSdk = (findProperty("android.minSdk") as String).toInt()
-        targetSdk = (findProperty("android.targetSdk") as String).toInt()
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-}
-
-rootProject.extensions.configure<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension> {
-    versions.webpackCli.version = "4.10.0"
 }

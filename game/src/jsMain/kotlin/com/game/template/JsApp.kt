@@ -1,12 +1,12 @@
 package com.game.template
 
-import com.lehaine.littlekt.createLittleKtApp
-import com.lehaine.littlekt.graphics.Color
+import com.littlekt.createLittleKtApp
 
 fun main() {
     createLittleKtApp {
+        width = 960
+        height = 540
         title = "LittleKt Game Template"
-        backgroundColor = Color.DARK_GRAY
         canvasId = "canvas"
     }.start {
         Game(it)
