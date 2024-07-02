@@ -2,7 +2,7 @@
 kotlin = "2.0.0"
 kotlinx-html = "0.11.0"
 kotlinx-coroutines = "1.9.0-RC"
-littlekt = "0.10.0.b1264bb-SNAPSHOT"
+littlekt = "0.10.0"
 
 [libraries]
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
