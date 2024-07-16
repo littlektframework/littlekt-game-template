@@ -4,7 +4,8 @@ This template repository contains a base project for creating games with [Little
 the bare necessities to get a LittleKt project up and running. This includes the necessary plugins, dependencies and
 source set structure.
 
-This project is set up to use all the available platforms that LittleKt currently supports: **JVM**, **Web**, and **Android**. 
+This project is set up to use all the available platforms that LittleKt currently supports: **JVM**, **Web**, and *
+*Android**.
 If a certain platform isn't needed, simply deleting the source directory and the source sets in
 the `build.gradle.kts` file will get rid of it.
 
@@ -15,11 +16,11 @@ respective platform.
 
 ### JVM
 
-**Running:**
+#### Running
 
 Run `LwjglApp` to execute on the desktop.
 
-**Deploying:**
+#### Deploying
 
 A custom deploy task is created specifically for JVM. Run the `package/packageFatJar` gradle task to create a fat
 executable JAR. This task can be tinkered with in the `build.gradlek.kts` file.
@@ -27,36 +28,19 @@ executable JAR. This task can be tinkered with in the `build.gradlek.kts` file.
 If and when the packages are renamed from `com.game.template.LwjglApp` to whatever, ensure to update the `jvm.mainClass`
 property in the `gradle.properties` file to ensure that the `packageFatJar` task will work properly.
 
+A jar will be outputted in the build directory. To run this JAR, use the following
+command, replacing the name of the JAR, if needed: `java -jar --enable-preview game-1.0-all.jar`
+
+If you are running on Mac OS, then the following command can be
+used: `java -jar -XstartOnFirstThread --enable-preview game-1.0-all.jar`
+
 ### JS
 
-**Running:**
+#### Running
 
 Run the `kotlin browser/jsBrowserRun` gradle task like any other **Kotlin/JS** project to run in development mode.
 
-**Deploying:**
+#### Deploying
 
 Run the `kotlin browser/jsBrowserDistribution` gradle task to create a distribution build. This build will require a
 webserver in order to run.
-
-### WASM
-
-**Running:**
-
-Run the `kotlin browser/wasmJsBrowserRun` gradle task like any other **Kotlin/Wasm** project to run in development mode.
-
-**Deploying:**
-
-Run the `kotlin browser/wasmJsBrowserDistribution` gradle task to create a distribution build. This build will require a
-webserver in order to run.
-
-### Android
-
-**Running:**
-
-Run `AndroidApp` class under `src/androidMain/`.
-
-**Deploying:**
-
-To create a release build of the Android application, use the `Build/Generate Signed Bundle / APK...` menu option. This
-will require knowledge on creating keys for signing the Android app. Going over how to do that is out of scope for this
-repository.

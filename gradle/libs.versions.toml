@@ -1,16 +1,15 @@
 [versions]
-agp = "8.2.0"
-kotlin = "1.9.23"
-kotlinx-html = "0.9.1"
-kotlinx-coroutines = "1.8.0"
-littlekt = "0.9.0"
+kotlin = "2.0.0"
+kotlinx-html = "0.11.0"
+kotlinx-coroutines = "1.9.0-RC"
+littlekt = "0.10.0"
 
 [libraries]
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-html-js = { module = "org.jetbrains.kotlinx:kotlinx-html-js", version.ref = "kotlinx-html" }
 
-littlekt-core = { module = "com.lehaine.littlekt:core", version.ref = "littlekt" }
+littlekt-core = { module = "com.littlekt:core", version.ref = "littlekt" }
+littlekt-scenegraph = { module = "com.littlekt:scene-graph", version.ref = "littlekt" }
 
 [plugins]
-android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
