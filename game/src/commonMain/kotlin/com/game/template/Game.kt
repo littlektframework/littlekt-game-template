@@ -12,7 +12,6 @@ import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.radians
 import com.littlekt.resources.Fonts
 import com.littlekt.util.viewport.ExtendViewport
-import com.littlekt.util.viewport.setViewport
 import kotlin.time.Duration.Companion.milliseconds
 
 class Game(context: Context) : ContextListener(context) {
@@ -86,7 +85,6 @@ class Game(context: Context) : ContextListener(context) {
                         )
                     )
                 )
-            renderPassEncoder.setViewport(viewport)
             camera.update()
 
             batch.use(renderPassEncoder, camera.viewProjection) {
