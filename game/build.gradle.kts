@@ -1,4 +1,5 @@
 import org.apache.tools.ant.taskdefs.condition.Os
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 
 repositories {
@@ -10,9 +11,9 @@ plugins {
 }
 
 kotlin {
-    tasks.withType<JavaExec> { jvmArgs("--enable-preview", "--enable-native-access=ALL-UNNAMED") }
+    tasks.withType<JavaExec> { jvmArgs("--enable-native-access=ALL-UNNAMED") }
     jvm {
-        compilations.all { kotlinOptions.jvmTarget = "21" }
+        compilerOptions { jvmTarget = JvmTarget.JVM_22 }
         compilations {
             val main by getting
 
@@ -83,7 +84,7 @@ kotlin {
 
         this.attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
 
-        compilations.all { kotlinOptions.sourceMap = true }
+        compilerOptions { sourceMap = true }
     }
 
     sourceSets {

@@ -92,6 +92,7 @@ class Game(context: Context) : ContextListener(context) {
                 shapeRenderer.filledRectangle(-50f, 50f, 100f, 50f, rotation, color = Color.RED)
             }
             renderPassEncoder.end()
+            renderPassEncoder.release()
 
             rotationTimer += dt
             if (rotationTimer > 10.milliseconds) {
@@ -105,7 +106,6 @@ class Game(context: Context) : ContextListener(context) {
             graphics.surface.present()
 
             commandBuffer.release()
-            renderPassEncoder.release()
             commandEncoder.release()
             frame.release()
             swapChainTexture.release()
